@@ -2,9 +2,9 @@ FROM python 3.12-slim
 
 WORKDIR /app
 
-COPY requirments.txt 
+COPY requirements.txt 
 
-RUn pip install -r requirments.txt
+RUn pip install -r requirements.txt
 
 COPY . .
 
