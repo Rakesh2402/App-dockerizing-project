@@ -1,17 +1,25 @@
-from flask import Flask
-import os
+from flask import Flask, render_template, request, redirect
 
 app = Flask(__name__)
 
-@app.route("/")
-def home():
-    db_host = os.getenv("DB_HOST")
-    db_name = os.getenv("POSTGRES_DB")
+todos = []
 
-    return f"Flask App Connected to Database: {db_name} on {db_host}"
+@app.route("/")
+def index():
+    return render_template("index.html", todos=todos)
+
+@app.route("/add", methods=["POST"])
+def add():
+    task = request.form.get("task")
+    if task:
+        todos.append(task)
+    return redirect("/")
+
+@app.route("/delete/<int:index>")
+def delete(index):
+    if 0 <= index < len(todos):
+        todos.pop(index)
+    return redirect("/")
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
-    
-
-    ##a
+    app.run(debug=True)
