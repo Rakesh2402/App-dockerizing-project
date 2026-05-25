@@ -1,0 +1,46 @@
+services:
+    db:
+      image: postgress:16-alpine
+      container_name: postgres_db
+      environment:
+        POSTGRES_DB: mydb
+        POSTGRE_USER: myuser
+        POSTGRES_PASSWORD: mypassword
+
+      ports:
+      "5432:5432"
+      volumes:
+        - postgres-data:/var/lib/postgresql/data
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U myuser -d mydb"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
+
+      networks:
+        - flask-network
+
+    app:
+      build: .
+      container_name: flask_app
+
+      environment:
+        DB_HOST: db
+        POSTGRES_DB: mydb
+
+      ports:
+      - "5000:5000"
+
+      depends_on:
+        db:
+          condition: service_healthy
+        networks:
+          - flask-network
+
+    volumes:
+      postgres-data:
+
+
+    networks:
+      flask-network:
+   
